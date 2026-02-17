@@ -47,6 +47,50 @@ async def root():
 
 @app.post('/format/description')
 async def formatDescription(text : TextRequest):
+    """
+    Endpoint: POST /format/description
+
+    Description:
+        Formats a raw session description into structured, professional Markdown
+        suitable for publishing on a student activity website.
+
+    Overview:
+        This endpoint accepts a rough session description (either a paragraph
+        or structured notes such as "Session Name:", "Topics:", "Resources:")
+        and converts it into clean, well-structured Markdown.
+
+        The generated output includes:
+            - A formatted H2 title
+            - A concise, high-energy summary paragraph (2–3 sentences)
+            - A structured "Key Topics" section
+            - A "Resources" section (if links are detected)
+            - Grammar and spelling corrections
+            - Bold formatting for key technologies
+            - Friendly emojis in section headers
+
+    Request Model:
+        TextRequest
+            text (str): Raw session description.
+                        Must contain at least 5 characters.
+
+    Response Model:
+        DescriptionResponse
+            markdown (str): Generated structured Markdown content.
+
+    Validation:
+        - If the input text length is less than 5 characters,
+          a 400 HTTPException is raised.
+
+    Error Handling:
+        - 400 Bad Request:
+            Raised when input text is too short.
+            Detail: "Input text is too short."
+
+        - 500 Internal Server Error:
+            Raised when the AI model fails to generate content.
+            Detail: "Failed to generate the response pls try again, <error>"
+    """
+
     if len(text.text) < 5:
         raise HTTPException(status_code=400, detail="Input text is too short.")
 
@@ -56,7 +100,7 @@ async def formatDescription(text : TextRequest):
     
     ### INPUT:
     You will receive text that might be a rough paragraph OR a list of notes (e.g., "Session Name:", "Topics:", "Resources:").
-    {text}
+    Input :{text}
     
     ### OUTPUT:
     Output ONLY the formatted Markdown code. Do not output code fences (```) or conversational text.
